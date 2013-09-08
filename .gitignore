@@ -1,2 +1,8 @@
 a.out
 *~
+/main.o
+/ss-tokens.o
+*.o
+/simple-shell
+/.sconsign.dblite
+/tester
