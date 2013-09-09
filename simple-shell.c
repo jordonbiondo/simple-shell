@@ -1,3 +1,28 @@
+/* simple-shell.c --- A simple shell
+ * 
+ * Filename: simple-shell.c
+ * Description: A simple shell
+ * Author: Jordon Biondo, Doug MacDonald
+ * Created: Mon Sep  9 00:14:19 2013 (-0400)
+ * Version: 0.1.1
+ * Last-Updated: Mon Sep  9 00:14:49 2013 (-0400)
+ *           By: Jordon Biondo
+ *     Update #: 3
+ * URL: https://github.com/jordonbiondo/simple-shell
+ */
+
+/* Commentary: 
+ * 
+ * Provides a basic shell.
+ * 
+ */
+
+/* Change Log:
+ * 
+ * nil.
+ */
+
+/* Code: */
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -6,6 +31,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "simple-shell.h"
 #include "ss-strings.h"
 #include "ss-debug.h"
 
@@ -13,39 +39,6 @@
  * Simple Shell
  * main.c
  */
-
-/**
- * Input buffer
- */
-#define INPUT_BUFFER_SIZE 1024
-
-/**
- * Function Prototypes
- */
-char* read_input(void);
-
-void handle_input(void);
-
-void exit_shell(void);
-
-void tokenize_input(void);
-
-char** tokenize(const char*);
-
-void child_execute_input(char**);
-
-void handle_exit_status(int);
-
-void free_input_tokens(void);
-
-/**
- * Globals
- */
-// user input
-char* input_buffer;
-
-// tokenized input
-char** input_tokens;
 
 
 /**
