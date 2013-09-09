@@ -14,14 +14,15 @@
  * main.c
  */
 
+/**
+ * Input buffer
+ */
 #define INPUT_BUFFER_SIZE 1024
 
 /**
  * Function Prototypes
  */
 char* read_input(void);
-
-void prompt_user(void);
 
 void handle_input(void);
 
@@ -54,13 +55,14 @@ int main(int argc, char* argv[], char* envp[]) {
   LOG_ENTRY;
   input_buffer = calloc(INPUT_BUFFER_SIZE, sizeof(char));
   while(1) {
-    prompt_user();
+    printf(PROMPT_MSG);
     if(read_input() != NULL) {
       handle_input();
       pid_t child_pid = fork();
       int status;
       if(child_pid) { //parent-execution
 	waitpid(child_pid, &status, 0);
+	DEBUG_PRINT("---------- end ----------------------------------------------------\n");
 	handle_exit_status(status);
       } else { //child execution
 	child_execute_input(envp);
@@ -73,43 +75,46 @@ int main(int argc, char* argv[], char* envp[]) {
   return 0;
 }
 
+
 /**
  * Execute input
  */
 void child_execute_input(char** envp) {
   LOG_ENTRY;
+  DEBUG_PRINT("------ child output -----------------------------------------------\n");
   execve(input_tokens[0], input_tokens, envp);
   // if failure
   printf("Failed to execute: %s -> %s\n", input_buffer, strerror(errno));
   LOG_EXIT;
   exit(errno);
 }
+
+
 /**
  * Handle exit status
  */
 void handle_exit_status(int status) {
+  LOG_ENTRY;
   if (WEXITSTATUS(status)) {
     printf("%s %d\n", CHILD_STATUS_ERROR_MSG, WEXITSTATUS(status));
   }
+  LOG_EXIT;
 }
-/**
- * Prompt User
- */
-void prompt_user(void) {
-  printf(PROMPT_MSG);
-}
+
 
 /**
  * Handle Input
  */
 void handle_input(void) {
-  printf("handlining input\n");
+  LOG_ENTRY;
   if (strcmp(input_buffer, SHELL_QUIT_CMD) == 0) {
     exit_shell();
   } else {
     input_tokens = tokenize(input_buffer);
   }
+  LOG_EXIT;
 }
+
 
 /**
  * Read Input
@@ -117,6 +122,7 @@ void handle_input(void) {
 char* read_input(void) {
   return (char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin);
 }
+
 
 /**
  * Exit the shell
@@ -128,6 +134,10 @@ void exit_shell(void) {
   exit(0);
 }
 
+
+/**
+ * Free Input Tokens.
+ */
 void free_input_tokens(void) {
   LOG_ENTRY;
   #if DEBUG
@@ -149,9 +159,10 @@ void free_input_tokens(void) {
   LOG_EXIT;
 }
 
+
 /**
  * Tokenize, 
- * Temporarily stolen from: http://stackoverflow.com/questions/8106765/using-strtok-in-c
+ * Heavily inspired by: http://stackoverflow.com/questions/8106765/using-strtok-in-c
  */
 char** tokenize(const char* input) {
   LOG_ENTRY;

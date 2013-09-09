@@ -6,3 +6,5 @@ a.out
 /simple-shell
 /.sconsign.dblite
 /tester
+/ss-dbg
+/ss-opt
