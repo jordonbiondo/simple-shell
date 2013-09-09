@@ -30,7 +30,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-
+#include <time.h>
 #include "simple-shell.h"
 #include "ss-strings.h"
 #include "ss-debug.h"
@@ -51,11 +51,14 @@ int main(int argc, char* argv[], char* envp[]) {
     printf(PROMPT_MSG);
     if(read_input() != NULL) {
       handle_input();
+      clock_t child_start_tick = clock();
       pid_t child_pid = fork();
       int status;
       if(child_pid) { //parent-execution
 	waitpid(child_pid, &status, 0);
-	DEBUG_PRINT("---------- end ----------------------------------------------------\n");
+	clock_t child_elapsed_ticks = clock() - child_start_tick;
+	printf (CHILD_EXECUTION_TIME_FMT, ((float)child_elapsed_ticks)/CLOCKS_PER_SEC);
+	CHILD_OUT_END;
 	handle_exit_status(status);
       } else { //child execution
 	child_execute_input(envp);
@@ -74,7 +77,7 @@ int main(int argc, char* argv[], char* envp[]) {
  */
 void child_execute_input(char** envp) {
   LOG_ENTRY;
-  DEBUG_PRINT("------ child output -----------------------------------------------\n");
+  CHILD_OUT_START;
   execve(input_tokens[0], input_tokens, envp);
   // if failure
   printf("Failed to execute: %s -> %s\n", input_buffer, strerror(errno));
