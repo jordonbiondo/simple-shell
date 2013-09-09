@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <time.h>
+
 #include "simple-shell.h"
 #include "ss-strings.h"
 #include "ss-debug.h"
@@ -40,37 +41,43 @@
  * main.c
  */
 
-
 /**
  * Main
  */
 int main(int argc, char* argv[], char* envp[]) {
   LOG_ENTRY;
   input_buffer = calloc(INPUT_BUFFER_SIZE, sizeof(char));
+  prompt_buffer = calloc(PROMPT_BUFFER_SIZE, sizeof(char));
   while(1) {
-    printf(PROMPT_MSG);
+    printf("[%s]> ", get_prompt());
     if(read_input() != NULL) {
-      handle_input();
-      clock_t child_start_tick = clock();
-      pid_t child_pid = fork();
-      int status;
-      if(child_pid) { //parent-execution
-	waitpid(child_pid, &status, 0);
-	clock_t child_elapsed_ticks = clock() - child_start_tick;
-	printf (CHILD_EXECUTION_TIME_FMT, ((float)child_elapsed_ticks)/CLOCKS_PER_SEC);
-	CHILD_OUT_END;
-	handle_exit_status(status);
-      } else { //child execution
-	child_execute_input(envp);
+      bool valid = handle_input();
+      if (valid) {
+	clock_t child_start_tick = clock();
+	pid_t child_pid = fork();
+	int status;
+	if(child_pid) { //parent-execution
+	  waitpid(child_pid, &status, 0);
+	  clock_t child_elapsed_ticks = clock() - child_start_tick;
+	  printf (CHILD_EXECUTION_TIME_FMT, ((float)child_elapsed_ticks)/CLOCKS_PER_SEC);
+	  CHILD_OUT_END;
+	  handle_exit_status(status);
+	} else { //child execution
+	  child_execute_input(envp);
+	}
       }
     } else {
       printf(EOF_ERROR_MSG);
     }
     DEBUG_PRINT("User entered: [%s]\n", input_buffer);
   }
-  return 0;
+  LOG_RETURN(0);
 }
 
+char* get_prompt() {
+  getcwd(prompt_buffer, PROMPT_BUFFER_SIZE);
+  LOG_RETURN(strrchr(prompt_buffer, '/') + 1);
+}
 
 /**
  * Execute input
@@ -78,11 +85,10 @@ int main(int argc, char* argv[], char* envp[]) {
 void child_execute_input(char** envp) {
   LOG_ENTRY;
   CHILD_OUT_START;
-  execve(input_tokens[0], input_tokens, envp);
+  execvp(input_tokens[0], input_tokens);
   // if failure
   printf("Failed to execute: %s -> %s\n", input_buffer, strerror(errno));
-  LOG_EXIT;
-  exit(errno);
+  LOG_EXIT(errno);
 }
 
 
@@ -94,29 +100,46 @@ void handle_exit_status(int status) {
   if (WEXITSTATUS(status)) {
     printf("%s %d\n", CHILD_STATUS_ERROR_MSG, WEXITSTATUS(status));
   }
-  LOG_EXIT;
+  LOG_RETURN();
 }
 
 
 /**
  * Handle Input
  */
-void handle_input(void) {
+bool handle_input(void) {
   LOG_ENTRY;
   if (strcmp(input_buffer, SHELL_QUIT_CMD) == 0) {
     exit_shell();
+    LOG_RETURN(false);
+  } else if (str_is_whitespace(input_buffer)) {
+    LOG_RETURN(false);
   } else {
     input_tokens = tokenize(input_buffer);
+    LOG_RETURN(true);
   }
-  LOG_EXIT;
 }
 
+/**
+ * Returns true if a string is all whitespace characters
+ */
+bool str_is_whitespace(char* str) {
+  LOG_ENTRY;
+  char* c;
+  for (c = str; c && *c; c++) {
+    if (!(*c == ' ' || *c == '\t' || *c == '\n')) {
+      LOG_RETURN(false);
+    }
+  }
+  LOG_RETURN(true);
+}
 
 /**
  * Read Input
  */
 char* read_input(void) {
-  return (char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin);
+  LOG_ENTRY;
+  LOG_RETURN((char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin));
 }
 
 
@@ -124,10 +147,12 @@ char* read_input(void) {
  * Exit the shell
  */
 void exit_shell(void) {
+  LOG_ENTRY;
   printf(EXIT_MSG);
+  free(prompt_buffer);
   free(input_buffer);
   free_input_tokens();
-  exit(0);
+  LOG_EXIT(0);
 }
 
 
@@ -152,7 +177,7 @@ void free_input_tokens(void) {
     #endif
     free(input_tokens);
   }
-  LOG_EXIT;
+  LOG_RETURN();
 }
 
 
@@ -186,7 +211,6 @@ char** tokenize(const char* input) {
     
     free(str);
   }
-  LOG_EXIT;
-  return tokens;
+  LOG_RETURN(tokens);
 }
 

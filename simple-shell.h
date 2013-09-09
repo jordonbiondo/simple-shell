@@ -1,12 +1,23 @@
+#include <stdbool.h>
 /**
- * Input buffer
+ * Input Buffe Size
  */
 #define INPUT_BUFFER_SIZE 1024
+
+/**
+ * Prompt Buffer Size
+ */
+#define PROMPT_BUFFER_SIZE 512
 
 /**
  * User input
  */
 char* input_buffer;
+
+/**
+ * Prompt Buffer
+ */
+char* prompt_buffer;
 
 
 /**
@@ -16,6 +27,11 @@ char** input_tokens;
 
 
 /**
+ * Return the shell prompt
+ */
+char* get_prompt(void);
+
+/**
  * Read input from stdin and return a pointer to it.
  */
 char* read_input(void);
@@ -23,8 +39,12 @@ char* read_input(void);
 /**
  * Act accordingly to the given input
  */
-void handle_input(void);
+bool handle_input(void);
 
+/**
+ * Returns true if a string is all whitespace characters
+ */
+bool str_is_whitespace(char*);
 /**
  * Free resources and exit the program
  */
