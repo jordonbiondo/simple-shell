@@ -27,3 +27,6 @@
  * Child Error
  */
 #define CHILD_STATUS_ERROR_MSG "Child process exited with a status of"
+
+
+#define CHILD_EXECUTION_TIME_FMT "Child executed in %f seconds.\n"
