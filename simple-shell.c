@@ -75,6 +75,7 @@ int main(int argc, char* argv[], char* envp[]) {
 }
 
 char* get_prompt() {
+  LOG_ENTRY;
   getcwd(prompt_buffer, PROMPT_BUFFER_SIZE);
   LOG_RETURN(strrchr(prompt_buffer, '/') + 1);
 }
@@ -183,7 +184,7 @@ void free_input_tokens(void) {
 
 /**
  * Tokenize, 
- * Heavily inspired by: http://stackoverflow.com/questions/8106765/using-strtok-in-c
+ * Heavily inspired: http://stackoverflow.com/questions/8106765/using-strtok-in-c
  */
 char** tokenize(const char* input) {
   LOG_ENTRY;
