@@ -8,3 +8,7 @@ a.out
 /tester
 /ss-dbg
 /ss-opt
+/src/.sconsign.dblite
+/build/simple-shell
+/build/ss-dbg
+/build/ss-opt
