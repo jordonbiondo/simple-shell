@@ -5,22 +5,22 @@
  * Author: Jordon Biondo, Doug MacDonald
  * Created: Mon Sep  9 00:14:19 2013 (-0400)
  * Version: 0.1.1
- * Last-Updated: Mon Sep  9 00:14:49 2013 (-0400)
+ * Last-Updated: Mon Sep  9 13:28:15 2013 (-0400)
  *           By: Jordon Biondo
- *     Update #: 3
+ *     Update #: 13
  * URL: https://github.com/jordonbiondo/simple-shell
- */
-
-/* Commentary: 
+ *
+ **********************************
+ * Commentary: 
  * 
  * Provides a basic shell.
  * 
- */
-
-/* Change Log:
+ **********************************
+ *
+ * Change Log:
  * 
  * nil.
- */
+ **********************************/
 
 /* Code: */
 #include <stdio.h>
@@ -74,6 +74,9 @@ int main(int argc, char* argv[], char* envp[]) {
   LOG_RETURN(0);
 }
 
+/**
+ * Get the prompt string.
+ */
 char* get_prompt() {
   LOG_ENTRY;
   getcwd(prompt_buffer, PROMPT_BUFFER_SIZE);
@@ -81,7 +84,7 @@ char* get_prompt() {
 }
 
 /**
- * Execute input
+ * Execute input.
  */
 void child_execute_input(char** envp) {
   LOG_ENTRY;
@@ -94,7 +97,7 @@ void child_execute_input(char** envp) {
 
 
 /**
- * Handle exit status
+ * Handle exit status.
  */
 void handle_exit_status(int status) {
   LOG_ENTRY;
@@ -106,7 +109,7 @@ void handle_exit_status(int status) {
 
 
 /**
- * Handle Input
+ * Handle Input.
  */
 bool handle_input(void) {
   LOG_ENTRY;
@@ -121,8 +124,9 @@ bool handle_input(void) {
   }
 }
 
+
 /**
- * Returns true if a string is all whitespace characters
+ * Returns true if a string is all whitespace characters.
  */
 bool str_is_whitespace(char* str) {
   LOG_ENTRY;
@@ -135,8 +139,9 @@ bool str_is_whitespace(char* str) {
   LOG_RETURN(true);
 }
 
+
 /**
- * Read Input
+ * Read Input.
  */
 char* read_input(void) {
   LOG_ENTRY;
@@ -145,7 +150,7 @@ char* read_input(void) {
 
 
 /**
- * Exit the shell
+ * Exit the shell.
  */
 void exit_shell(void) {
   LOG_ENTRY;
@@ -214,4 +219,3 @@ char** tokenize(const char* input) {
   }
   LOG_RETURN(tokens);
 }
-
