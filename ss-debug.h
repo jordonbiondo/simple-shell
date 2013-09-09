@@ -12,3 +12,7 @@
 
 #define DEBUG_PRINT if (DEBUG) printf
 
+#define CHILD_OUT_START DEBUG_PRINT("------ child output -----------------------------------------------\n")
+
+#define CHILD_OUT_END DEBUG_PRINT("---------- end ----------------------------------------------------\n")
+
