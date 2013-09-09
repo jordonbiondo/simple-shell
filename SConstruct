@@ -22,7 +22,7 @@
 
 # opt = optEnv.Program(optObj)
 # dbg = dbgEnv.Program(optObj)
-source_files = ['main.c']
+source_files = ['simple-shell.c']
 env = Environment(CC = 'gcc')
 opt = env.Clone(CCFLAGS = '-O2')
 dbg = env.Clone(CCFLAGS = ['-g', '-DDEBUG=1'])
