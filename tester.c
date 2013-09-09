@@ -19,6 +19,7 @@ int main(int argc, char* argv[], char *envp[]) {
     printf("child done! status: %d\n", WEXITSTATUS(status));
   } else {
     printf("child running!\n");
+    printf("%s %s %s ", argv[1], &argv[1], envp);
     execve(argv[1], &argv[1], envp);
     printf("%s\n", strerror(errno));
     exit(errno);

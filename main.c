@@ -6,29 +6,44 @@
 #include <stdlib.h>
 #include <errno.h>
 
-
-/* #include "ss-tokens.h" */
 #include "ss-strings.h"
 #include "ss-debug.h"
 
+/**
+ * Simple Shell
+ * main.c
+ */
+
 #define INPUT_BUFFER_SIZE 1024
 
-
 /**
- * Prototypes
+ * Function Prototypes
  */
 char* read_input(void);
+
 void prompt_user(void);
+
 void handle_input(void);
+
 void exit_shell(void);
+
 void tokenize_input(void);
+
 char** tokenize(const char*);
+
+void child_execute_input(char**);
+
+void handle_exit_status(int);
+
+void free_input_tokens(void);
 
 /**
  * Globals
  */
+// user input
 char* input_buffer;
 
+// tokenized input
 char** input_tokens;
 
 
@@ -44,27 +59,39 @@ int main(int argc, char* argv[], char* envp[]) {
       handle_input();
       pid_t child_pid = fork();
       int status;
-      if(child_pid) {
+      if(child_pid) { //parent-execution
 	waitpid(child_pid, &status, 0);
-	if (WEXITSTATUS(status)) {
-	  printf("Exited with a status of %d\n", WEXITSTATUS(status));
-	}
-      } else {
-	printf("Executing: %s\n", input_tokens[0]);
-	execve(input_tokens[0], &input_tokens[0], envp);
-	printf("%s\n", strerror(errno));
-	exit(errno);
+	handle_exit_status(status);
+      } else { //child execution
+	child_execute_input(envp);
       }
-      
     } else {
-      printf(ERROR_MSG);
+      printf(EOF_ERROR_MSG);
     }
-    if (DEBUG) printf("User entered: %s\n", (char*)&input_buffer);
+    DEBUG_PRINT("User entered: [%s]\n", input_buffer);
   }
   return 0;
 }
 
-
+/**
+ * Execute input
+ */
+void child_execute_input(char** envp) {
+  LOG_ENTRY;
+  execve(input_tokens[0], input_tokens, envp);
+  // if failure
+  printf("Failed to execute: %s -> %s\n", input_buffer, strerror(errno));
+  LOG_EXIT;
+  exit(errno);
+}
+/**
+ * Handle exit status
+ */
+void handle_exit_status(int status) {
+  if (WEXITSTATUS(status)) {
+    printf("%s %d\n", CHILD_STATUS_ERROR_MSG, WEXITSTATUS(status));
+  }
+}
 /**
  * Prompt User
  */
@@ -91,16 +118,35 @@ char* read_input(void) {
   return (char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin);
 }
 
-
-/**
- * Tokenize Input
-
 /**
  * Exit the shell
  */
 void exit_shell(void) {
   printf(EXIT_MSG);
+  free(input_buffer);
+  free_input_tokens();
   exit(0);
+}
+
+void free_input_tokens(void) {
+  LOG_ENTRY;
+  #if DEBUG
+  int free_count = 0;
+  #endif
+  if (input_tokens && *input_tokens) {
+    char** foo;
+    for (foo = input_tokens; foo && *foo; foo++) {
+      #if DEBUG
+      free_count++;
+      #endif
+      free(*foo);
+    }
+    #if DEBUG
+    printf("%d tokens freed\n", free_count);
+    #endif
+    free(input_tokens);
+  }
+  LOG_EXIT;
 }
 
 /**
@@ -109,26 +155,30 @@ void exit_shell(void) {
  */
 char** tokenize(const char* input) {
   LOG_ENTRY;
+  free_input_tokens();
   char* str = strdup(input);
-  int i = 0;
-  int current_count = 10;
-  char** tokens = malloc(current_count*sizeof(*tokens));
-  
-  char* tok=strtok(str," "); 
-  
-  while(1)
-    {
-      if (i >= current_count)
-	tokens = realloc(tokens, (current_count*=2)*sizeof(*tokens));
-      
-      tokens[i++] = tok? strdup(tok) : tok;
-      
-      if (!tok) break;
-      
-      tok=strtok(NULL," ");
-    } 
-  
+  int tok_count = 0;
+  char* tok=strtok(str," \n"); 
+  tok_count++;
+  while (tok) {
+    tok_count++;
+    tok = strtok(NULL, " \n");
+  }
   free(str);
+  char** tokens;
+  if (tok_count) {
+    str = strdup(input);
+    tokens = malloc(tok_count*sizeof(*tokens));
+    tok=strtok(str," \n"); 
+    int i = 0;
+    for (i = 0; i < tok_count; i++) {
+
+      tokens[i] = tok ? strdup(tok) : tok;
+      tok=strtok(NULL," \n");
+    } 
+    
+    free(str);
+  }
   LOG_EXIT;
   return tokens;
 }
