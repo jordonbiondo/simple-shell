@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,18 +57,17 @@ int main(int argc, char* argv[], char* envp[]) {
     if(read_input() != NULL) {
       bool valid = handle_input();
       if (valid) {
-	struct timeval start, end;
-	long mtime, secs, usecs;
+	struct timeval start;
+	struct timeval end;
+	long elapsed;
 	gettimeofday(&start, NULL);
 	pid_t child_pid = fork();
 	int status;
 	if(child_pid) { //parent-execution
 	  waitpid(child_pid, &status, 0);
 	  gettimeofday(&end, NULL);
-	  secs  = end.tv_sec  - start.tv_sec;
-	  usecs = end.tv_usec - start.tv_usec;
-	  mtime = ((secs) * 1000 + usecs/1000.0) + 0.5;
-	  printf("Elapsed time: %ld millisecs\n", mtime);
+	  elapsed = ((end.tv_sec  - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec)/1000.0);
+	  printf(CHILD_EXECUTION_TIME_FMT, ((float)elapsed) / 1000);
 	  CHILD_OUT_END;
 	  handle_exit_status(status);
 	} else { //child execution
