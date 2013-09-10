@@ -5,22 +5,24 @@
  * Author: Jordon Biondo, Doug MacDonald
  * Created: Mon Sep  9 00:14:19 2013 (-0400)
  * Version: 0.1.1
- * Last-Updated: Tue Sep 10 12:58:33 2013 (-0400)
+ * Last-Updated: Tue Sep 10 13:39:39 2013 (-0400)
  *           By: Jordon Biondo
- *     Update #: 17
+ *     Update #: 18
  * URL: https://github.com/jordonbiondo/simple-shell
  *
  **********************************
  * Commentary: 
  * 
  * Provides a basic shell.
- * 
- **********************************
  *
- * Change Log:
+ ***********************************
+ * Built in commands:
  * 
- * nil.
- **********************************/
+ *   quit             : exit the shell
+ *   exit             : same is quit
+ *   cd [target dir]  : change current directory to target directory
+ *  
+ **********************************
 
 /* Code: */
 #include <stdio.h>
