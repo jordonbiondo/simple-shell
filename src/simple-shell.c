@@ -49,7 +49,7 @@ int main(int argc, char* argv[], char* envp[]) {
   input_buffer = calloc(INPUT_BUFFER_SIZE, sizeof(char));
   prompt_buffer = calloc(PROMPT_BUFFER_SIZE, sizeof(char));
   while(1) {
-    printf("[%s]> ", get_prompt());
+    printf("%s[%sSimpSH:%s%s]%s> ", COLOR_BLUE, COLOR_RESET, get_prompt(), COLOR_BLUE, COLOR_RESET);
     if(read_input() != NULL) {
       bool valid = handle_input();
       if (valid) {
@@ -69,7 +69,6 @@ int main(int argc, char* argv[], char* envp[]) {
     } else {
       printf(EOF_ERROR_MSG);
     }
-    DEBUG_PRINT("User entered: [%s]\n", input_buffer);
   }
   LOG_RETURN(0);
 }
@@ -116,6 +115,9 @@ bool handle_input(void) {
   if (strcmp(input_buffer, SHELL_QUIT_CMD) == 0) {
     exit_shell();
     LOG_RETURN(false);
+  } else if (strncmp(input_buffer, "cd", 2) == 0 && input_buffer[2] == ' ') {
+    change_directory();
+    LOG_RETURN(false);
   } else if (str_is_whitespace(input_buffer)) {
     LOG_RETURN(false);
   } else {
@@ -135,6 +137,24 @@ bool str_is_whitespace(char* str) {
     if (!(*c == ' ' || *c == '\t' || *c == '\n')) {
       LOG_RETURN(false);
     }
+  }
+  LOG_RETURN(true);
+}
+
+
+/**
+ * Change Directory. 
+ */
+bool change_directory(void) {
+  int input_length = strlen(input_buffer);
+
+  char target_dir [input_length - 3];
+  memcpy(target_dir, input_buffer + 3, input_length - 3);
+  target_dir[input_length-3-1] = '\0';
+
+  if(chdir(target_dir)) {
+    printf("%s: %s", CHANGE_DIR_ERROR_MSG, strerror(errno));
+    LOG_RETURN(false);
   }
   LOG_RETURN(true);
 }
@@ -210,11 +230,9 @@ char** tokenize(const char* input) {
     tok=strtok(str," \n"); 
     int i = 0;
     for (i = 0; i < tok_count; i++) {
-
       tokens[i] = tok ? strdup(tok) : tok;
       tok=strtok(NULL," \n");
     } 
-    
     free(str);
   }
   LOG_RETURN(tokens);

@@ -42,6 +42,11 @@ char* read_input(void);
 bool handle_input(void);
 
 /**
+ * Change Directory (cd)
+ */
+bool change_directory(void);
+
+/**
  * Returns true if a string is all whitespace characters
  */
 bool str_is_whitespace(char*);

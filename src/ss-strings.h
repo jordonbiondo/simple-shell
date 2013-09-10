@@ -6,7 +6,7 @@
 /**
  * Error
  */
-#define EOF_ERROR_MSG "\nError: EOF encountered in command!\n"
+#define EOF_ERROR_MSG "\n\x1b[31mError:\x1b[0m EOF encountered in command!\n"
 
 /**
  * Prompt
@@ -32,9 +32,14 @@
 /**
  * Exec time
  */
-#define CHILD_EXECUTION_TIME_FMT "Child executed in %f seconds.\n"
+#define CHILD_EXECUTION_TIME_FMT "Child executed in \x1b[32m%f \x1b[0mseconds.\n"
 
 /**
  * Exec failed
  */
-#define FAILED_TO_EXEC_FMT "Failed to execute: %s -> %s\n"
+#define FAILED_TO_EXEC_FMT "\x1b[31mFailed to execute: \x1b[0m%s -> \x1b[33m%s\x1b[0m\n"
+
+/**
+ * Change Dir Failed
+ */
+#define CHANGE_DIR_ERROR_MSG "\x1b[31mFailed\x1b[0m"
