@@ -19,11 +19,6 @@
 #define EXIT_MSG "Exitting...\n"
 
 /**
- * Quit command
- */
-#define SHELL_QUIT_CMD "quit\n"
-
-/**
  * Child Error
  */
 #define CHILD_STATUS_ERROR_MSG "Child process exited with a status of"

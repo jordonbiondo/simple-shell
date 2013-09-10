@@ -126,10 +126,10 @@ void handle_exit_status(int status) {
  */
 bool handle_input(void) {
   LOG_ENTRY;
-  if (strcmp(input_buffer, SHELL_QUIT_CMD) == 0) {
+  if (is_quit_command(input_buffer)) {
     exit_shell();
     LOG_RETURN(false);
-  } else if (strncmp(input_buffer, "cd", 2) == 0 && input_buffer[2] == ' ') {
+  } else if (is_cd_command(input_buffer)) {
     change_directory();
     LOG_RETURN(false);
   } else if (str_is_whitespace(input_buffer)) {
@@ -153,6 +153,13 @@ bool str_is_whitespace(char* str) {
     }
   }
   LOG_RETURN(true);
+}
+
+/**
+ * Is cd command?
+ */
+inline bool is_cd_command(char* buffer) {
+  return (strncmp(buffer, "cd", 2) == 0 && buffer[2] == ' ');
 }
 
 
@@ -181,6 +188,14 @@ bool change_directory(void) {
 char* read_input(void) {
   LOG_ENTRY;
   LOG_RETURN((char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin));
+}
+
+
+/**
+ * Is quit/exit command?
+ */
+inline bool is_quit_command(char* buffer) {
+  return (strcmp(buffer, "quit\n") == 0) || (strcmp(buffer, "exit\n") == 0);
 }
 
 
@@ -254,7 +269,7 @@ char** tokenize(const char* input) {
 }
 
 #if DEBUG
-void dump_buffers(void) { 
+void dump_buffers(void) {
   printf("%s-----------------dumping buffers-------------------------------------%s\n",
 	 COLOR_RED, COLOR_RESET);
   printf("  - input_buffer: %s\n", input_buffer);
