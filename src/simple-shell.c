@@ -22,11 +22,12 @@
  *   exit             : same is quit
  *   cd [target dir]  : change current directory to target directory
  *  
- **********************************
+ **********************************/
 
 /* Code: */
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
