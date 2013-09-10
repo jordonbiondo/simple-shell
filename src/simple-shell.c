@@ -56,13 +56,18 @@ int main(int argc, char* argv[], char* envp[]) {
     if(read_input() != NULL) {
       bool valid = handle_input();
       if (valid) {
-	clock_t child_start_tick = clock();
+	struct timeval start, end;
+	long mtime, secs, usecs;
+	gettimeofday(&start, NULL);
 	pid_t child_pid = fork();
 	int status;
 	if(child_pid) { //parent-execution
 	  waitpid(child_pid, &status, 0);
-	  clock_t child_elapsed_ticks = clock() - child_start_tick;
-	  printf (CHILD_EXECUTION_TIME_FMT, ((float)child_elapsed_ticks)/CLOCKS_PER_SEC);
+	  gettimeofday(&end, NULL);
+	  secs  = end.tv_sec  - start.tv_sec;
+	  usecs = end.tv_usec - start.tv_usec;
+	  mtime = ((secs) * 1000 + usecs/1000.0) + 0.5;
+	  printf("Elapsed time: %ld millisecs\n", mtime);
 	  CHILD_OUT_END;
 	  handle_exit_status(status);
 	} else { //child execution
