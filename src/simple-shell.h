@@ -1,4 +1,6 @@
 #include <stdbool.h>
+#include "ss-debug.h"
+
 /**
  * Input Buffe Size
  */
@@ -31,6 +33,17 @@ char** input_tokens;
  */
 char* get_prompt(void);
 
+/**
+ * Dump buffers to stdout
+ */
+#if DEBUG
+void dump_buffers(void);
+#endif
+
+/**
+ * Display Prompt
+ */
+void display_prompt(void);
 /**
  * Read input from stdin and return a pointer to it.
  */

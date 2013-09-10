@@ -49,7 +49,7 @@ int main(int argc, char* argv[], char* envp[]) {
   input_buffer = calloc(INPUT_BUFFER_SIZE, sizeof(char));
   prompt_buffer = calloc(PROMPT_BUFFER_SIZE, sizeof(char));
   while(1) {
-    printf("%s[%sSimpSH:%s%s]%s> ", COLOR_BLUE, COLOR_RESET, get_prompt(), COLOR_BLUE, COLOR_RESET);
+    display_prompt();
     if(read_input() != NULL) {
       bool valid = handle_input();
       if (valid) {
@@ -69,6 +69,9 @@ int main(int argc, char* argv[], char* envp[]) {
     } else {
       printf(EOF_ERROR_MSG);
     }
+    #if DEBUG
+    dump_buffers();
+    #endif
   }
   LOG_RETURN(0);
 }
@@ -79,7 +82,18 @@ int main(int argc, char* argv[], char* envp[]) {
 char* get_prompt() {
   LOG_ENTRY;
   getcwd(prompt_buffer, PROMPT_BUFFER_SIZE);
-  LOG_RETURN(strrchr(prompt_buffer, '/') + 1);
+  #if DEBUG
+    LOG_RETURN(prompt_buffer);
+  #else
+    LOG_RETURN(strrchr(prompt_buffer, '/') + 1);
+  #endif
+}
+
+/**
+ * Display Prompt
+ */
+void display_prompt(void) {
+  printf("%s[%sSimpSH:%s%s]%s> ", COLOR_BLUE, COLOR_RESET, get_prompt(), COLOR_BLUE, COLOR_RESET);
 }
 
 /**
@@ -238,3 +252,19 @@ char** tokenize(const char* input) {
   }
   LOG_RETURN(tokens);
 }
+
+#if DEBUG
+void dump_buffers(void) { 
+  printf("%s-----------------dumping buffers-------------------------------------%s\n",
+	 COLOR_RED, COLOR_RESET);
+  printf("  - input_buffer: %s\n", input_buffer);
+  printf("  - prompt_buffer: %s\n", prompt_buffer);
+  printf("  - tokens:\n");
+  char** token_p;
+  for (token_p = input_tokens; token_p && *token_p; token_p++) {
+    printf("    - tok: %s\n", *token_p);
+  }
+  printf("%s---------------------end dump----------------------------------------%s\n",
+	 COLOR_RED, COLOR_RESET);
+}
+#endif
