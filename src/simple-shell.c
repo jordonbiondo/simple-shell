@@ -5,9 +5,9 @@
  * Author: Jordon Biondo, Doug MacDonald
  * Created: Mon Sep  9 00:14:19 2013 (-0400)
  * Version: 0.1.1
- * Last-Updated: Mon Sep  9 13:28:15 2013 (-0400)
+ * Last-Updated: Tue Sep 10 12:58:33 2013 (-0400)
  *           By: Jordon Biondo
- *     Update #: 13
+ *     Update #: 17
  * URL: https://github.com/jordonbiondo/simple-shell
  *
  **********************************
@@ -146,6 +146,7 @@ bool str_is_whitespace(char* str) {
  * Change Directory. 
  */
 bool change_directory(void) {
+  LOG_ENTRY;
   int input_length = strlen(input_buffer);
 
   char target_dir [input_length - 3];
