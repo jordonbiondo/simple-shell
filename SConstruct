@@ -4,7 +4,7 @@ env = Environment(CC = 'gcc', CCFLAGS=['-Wall'])
 
 #optimized env
 opt = env.Clone()
-opt.Append(CCFLAGS = ['-O2'])
+opt.Append(CCFLAGS = ['-O3'])
 
 #debug env
 dbg = env.Clone()
