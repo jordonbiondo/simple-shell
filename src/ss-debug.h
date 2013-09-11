@@ -1,4 +1,4 @@
-#include <stdbool.h>
+
 /**
  * This is a messy place...
  */
@@ -9,7 +9,6 @@
 #ifndef DEBUG
   #define DEBUG 0  
 #endif
-
 
 /**
  * Colors
