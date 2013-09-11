@@ -65,6 +65,15 @@ int main(int argc, char* argv[], char* envp[]) {
 	int status;
 	if(child_pid) { //parent-execution
 	  waitpid(child_pid, &status, 0);
+	  // rusage... won't work
+	  /* struct rusage child_info; */
+	  /* wait4(child_pid, &status, 0, &child_info); */
+	  /* printf("%f %f\n", child_info.ru_stime.tv_usec, child_info.ru_stime.tv_sec) ; */
+	  /* printf ("%ld.%06ld\n", child_info.ru_stime.tv_sec, child_info.ru_stime.tv_usec); */
+	  /* printf ("%ld.%06ld\n", child_info.ru_utime.tv_sec, child_info.ru_utime.tv_usec); */
+	  /* printf("%ld.%06ld\n",  */
+	  /* 	 child_info.ru_stime.tv_sec + child_info.ru_utime.tv_sec, */
+	  /* 	 child_info.ru_stime.tv_usec + child_info.ru_utime.tv_usec); */
 	  if (display_child_time) {
 	    gettimeofday(&end, NULL);
 	    elapsed = ((end.tv_sec  - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec)/1000.0);
@@ -78,6 +87,7 @@ int main(int argc, char* argv[], char* envp[]) {
       }
     } else {
       printf(EOF_ERROR_MSG);
+      exit_shell();
     }
     #if DEBUG
     dump_buffers();
