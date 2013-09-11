@@ -30,6 +30,17 @@ char* prompt_buffer;
  */
 char** input_tokens;
 
+/**
+ * Display child time
+ */
+bool display_child_time;
+
+
+/**
+ * Parse args
+ */
+void parse_args(int, char**);
+
 
 /**
  * Return the shell prompt

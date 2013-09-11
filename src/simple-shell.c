@@ -4,10 +4,10 @@
  * Description: A simple shell
  * Author: Jordon Biondo, Doug MacDonald
  * Created: Mon Sep  9 00:14:19 2013 (-0400)
- * Version: 0.1.1
- * Last-Updated: Tue Sep 10 13:39:39 2013 (-0400)
+ * Version: 0.2.4
+ * Last-Updated: Tue Sep 10 20:28:42 2013 (-0400)
  *           By: Jordon Biondo
- *     Update #: 18
+ *     Update #: 24
  * URL: https://github.com/jordonbiondo/simple-shell
  *
  **********************************
@@ -50,6 +50,7 @@
  */
 int main(int argc, char* argv[], char* envp[]) {
   LOG_ENTRY;
+  parse_args(argc, argv);
   input_buffer = calloc(INPUT_BUFFER_SIZE, sizeof(char));
   prompt_buffer = calloc(PROMPT_BUFFER_SIZE, sizeof(char));
   while(1) {
@@ -65,9 +66,11 @@ int main(int argc, char* argv[], char* envp[]) {
 	int status;
 	if(child_pid) { //parent-execution
 	  waitpid(child_pid, &status, 0);
-	  gettimeofday(&end, NULL);
-	  elapsed = ((end.tv_sec  - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec)/1000.0);
-	  printf(CHILD_EXECUTION_TIME_FMT, ((float)elapsed) / 1000);
+	  if (display_child_time) {
+	    gettimeofday(&end, NULL);
+	    elapsed = ((end.tv_sec  - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec)/1000.0);
+	    printf(CHILD_EXECUTION_TIME_FMT, ((float)elapsed) / 1000);
+	  }
 	  CHILD_OUT_END;
 	  handle_exit_status(status);
 	} else { //child execution
@@ -83,6 +86,18 @@ int main(int argc, char* argv[], char* envp[]) {
   }
   LOG_RETURN(0);
 }
+
+
+/**
+ * Parse args
+ */
+void parse_args(int argc, char** argv) {
+  display_child_time = true;
+  if (argc >= 2 && (strcmp(argv[1], "-notime") == 0)) {
+    display_child_time = false;
+  }
+}
+
 
 /**
  * Get the prompt string.
@@ -189,13 +204,13 @@ bool change_directory(void) {
   LOG_RETURN(true);
 }
 
-
 /**
  * Read Input.
  */
 char* read_input(void) {
   LOG_ENTRY;
-  LOG_RETURN((char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin));
+  char* x = (char*)fgets(input_buffer, INPUT_BUFFER_SIZE, stdin);
+  LOG_RETURN(x);
 }
 
 
