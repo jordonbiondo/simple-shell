@@ -57,32 +57,20 @@ int main(int argc, char* argv[], char* envp[]) {
     if(read_input() != NULL) {
       bool valid = handle_input();
       if (valid) {
-	struct timeval start;
-	struct timeval end;
-	long elapsed;
-	gettimeofday(&start, NULL);
 	pid_t child_pid = fork();
 	int status;
 	if(child_pid) { //parent-execution
-	  waitpid(child_pid, &status, 0);
-	  // rusage... won't work
-	  /* struct rusage child_info; */
-	  /* wait4(child_pid, &status, 0, &child_info); */
-	  /* printf("%f %f\n", child_info.ru_stime.tv_usec, child_info.ru_stime.tv_sec) ; */
-	  /* printf ("%ld.%06ld\n", child_info.ru_stime.tv_sec, child_info.ru_stime.tv_usec); */
-	  /* printf ("%ld.%06ld\n", child_info.ru_utime.tv_sec, child_info.ru_utime.tv_usec); */
-	  /* printf("%ld.%06ld\n",  */
-	  /* 	 child_info.ru_stime.tv_sec + child_info.ru_utime.tv_sec, */
-	  /* 	 child_info.ru_stime.tv_usec + child_info.ru_utime.tv_usec); */
+	  struct rusage child_info;
+	  wait4(child_pid, &status, 0, &child_info);
 	  if (display_child_time) {
-	    gettimeofday(&end, NULL);
-	    elapsed = ((end.tv_sec  - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec)/1000.0);
-	    printf(CHILD_EXECUTION_TIME_FMT, ((float)elapsed) / 1000);
+	    printf(CHILD_EXECUTION_TIME_FMT, 
+		   (float) (child_info.ru_stime.tv_sec + child_info.ru_utime.tv_sec) + 
+		   (float) (child_info.ru_stime.tv_usec + child_info.ru_utime.tv_usec) / 1000000);
 	  }
 	  CHILD_OUT_END;
 	  handle_exit_status(status);
 	} else { //child execution
-	  child_execute_input(envp);
+	  child_execute_input(envp);  
 	}
       }
     } else {
@@ -121,12 +109,14 @@ char* get_prompt() {
   #endif
 }
 
+
 /**
  * Display Prompt
  */
 void display_prompt(void) {
   printf("%s[%sSimpSH:%s%s]%s> ", COLOR_BLUE, COLOR_RESET, get_prompt(), COLOR_BLUE, COLOR_RESET);
 }
+
 
 /**
  * Execute input.
@@ -151,6 +141,7 @@ void handle_exit_status(int status) {
   }
   LOG_RETURN();
 }
+
 
 
 /**
@@ -186,6 +177,7 @@ bool str_is_whitespace(char* str) {
   }
   LOG_RETURN(true);
 }
+
 
 /**
  * Is cd command?
@@ -299,6 +291,7 @@ char** tokenize(const char* input) {
   }
   LOG_RETURN(tokens);
 }
+
 
 #if DEBUG
 void dump_buffers(void) {

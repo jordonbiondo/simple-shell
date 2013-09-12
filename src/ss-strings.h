@@ -27,7 +27,7 @@
 /**
  * Exec time
  */
-#define CHILD_EXECUTION_TIME_FMT "Child executed in \x1b[32m%f \x1b[0mseconds.\n"
+#define CHILD_EXECUTION_TIME_FMT "Child used \x1b[32m%f \x1b[0mseconds of precious processing time.\n"
 
 /**
  * Exec failed
