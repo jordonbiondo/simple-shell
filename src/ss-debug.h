@@ -6,6 +6,7 @@
 /**
  * Debug flag
  */
+#ifndef _SS_DEBUG_H_
 #ifndef DEBUG
   #define DEBUG 0  
 #endif
@@ -25,39 +26,49 @@
 /**
  * Function begin
  */
-#define LOG_ENTRY if (DEBUG) printf("\t%sIN%s  -> %s @ %s:%d\n", COLOR_GREEN, COLOR_RESET ,__func__, __FILE__, __LINE__)
+#define LOG_ENTRY							\
+  if (DEBUG) printf("\t%sIN%s  -> %s @ %s:%d\n",			\
+		    COLOR_GREEN, COLOR_RESET ,__func__, __FILE__, __LINE__)
 
 
 /**
  * System exit
  */
-#define LOG_EXIT(x)  if (DEBUG) printf("\t%sOUT%s -> %s @ %s:%d\n", COLOR_YELLOW, COLOR_RESET, __func__, __FILE__, __LINE__); exit(x)
+#define LOG_EXIT(x)							\
+  if (DEBUG) printf("\t%sOUT%s -> %s @ %s:%d\n",			\
+		    COLOR_YELLOW, COLOR_RESET, __func__, __FILE__, __LINE__); exit(x)
 
 /**
  * Printf if debug
  */
 #define DEBUG_PRINT if (DEBUG) printf
 
+
 /**
  * Beginning of child output
  */
-#define CHILD_OUT_START DEBUG_PRINT("%s------ child output -----------------------------------------------\n%s", COLOR_BLUE, COLOR_RESET)
+#define CHILD_OUT_START							\
+  DEBUG_PRINT("%s------ child output -----------------------------------------------\n%s", \
+	      COLOR_BLUE, COLOR_RESET)
 
 /**
  * End of child output
  */
-#define CHILD_OUT_END DEBUG_PRINT("%s---------- end ----------------------------------------------------\n%s", COLOR_BLUE, COLOR_RESET)
+#define CHILD_OUT_END							\
+  DEBUG_PRINT("%s---------- end ----------------------------------------------------\n%s", \
+	      COLOR_BLUE, COLOR_RESET)
 
 
 #if DEBUG
 /**
  * Function return with debug
  */
-#define LOG_RETURN(x) printf("\t%sOUT%s -> %s @ %s:%d\n", COLOR_YELLOW, COLOR_RESET, __func__, __FILE__, __LINE__); return x;
+#define LOG_RETURN(x) printf("\t%sOUT%s -> %s @ %s:%d\n",		\
+			     COLOR_YELLOW, COLOR_RESET, __func__, __FILE__, __LINE__); return x;
 #else
 /**
  * Function return
  */
 #define LOG_RETURN(x) return x;
 #endif
-
+#endif

@@ -1,5 +1,5 @@
-/* simple-shell.c --- A simple shell  
- * 
+/* simple-shell.c --- A simple shell
+ *
  * Filename: simple-shell.c
  * Description: A simple shell
  * Author: Jordon Biondo, Doug MacDonald
@@ -11,17 +11,17 @@
  * URL: https://github.com/jordonbiondo/simple-shell
  *
  **********************************
- * Commentary: 
- * 
+ * Commentary:
+ *
  * Provides a basic shell.
  *
  ***********************************
  * Built in commands:
- * 
+ *
  *   quit             : exit the shell
  *   exit             : same is quit
  *   cd [target dir]  : change current directory to target directory
- *  
+ *
  **********************************/
 
 /* Code: */
@@ -63,14 +63,14 @@ int main(int argc, char* argv[], char* envp[]) {
 	  struct rusage child_info;
 	  wait4(child_pid, &status, 0, &child_info);
 	  if (display_child_time) {
-	    printf(CHILD_EXECUTION_TIME_FMT, 
-		   (float) (child_info.ru_stime.tv_sec + child_info.ru_utime.tv_sec) + 
+	    printf(CHILD_EXECUTION_TIME_FMT,
+		   (float) (child_info.ru_stime.tv_sec + child_info.ru_utime.tv_sec) +
 		   (float) (child_info.ru_stime.tv_usec + child_info.ru_utime.tv_usec) / 1000000);
 	  }
 	  CHILD_OUT_END;
 	  handle_exit_status(status);
 	} else { //child execution
-	  child_execute_input(envp);  
+	  child_execute_input(envp);
 	}
       }
     } else {
@@ -188,7 +188,7 @@ inline bool is_cd_command(char* buffer) {
 
 
 /**
- * Change Directory. 
+ * Change Directory.
  */
 bool change_directory(void) {
   LOG_ENTRY;
@@ -262,7 +262,7 @@ void free_input_tokens(void) {
 
 
 /**
- * Tokenize, 
+ * Tokenize,
  * Heavily inspired: http://stackoverflow.com/questions/8106765/using-strtok-in-c
  */
 char** tokenize(const char* input) {
@@ -270,7 +270,7 @@ char** tokenize(const char* input) {
   free_input_tokens();
   char* str = strdup(input);
   int tok_count = 0;
-  char* tok=strtok(str," \n"); 
+  char* tok=strtok(str," \n");
   tok_count++;
   while (tok) {
     tok_count++;
@@ -281,12 +281,12 @@ char** tokenize(const char* input) {
   if (tok_count) {
     str = strdup(input);
     tokens = malloc(tok_count*sizeof(*tokens));
-    tok=strtok(str," \n"); 
+    tok=strtok(str," \n");
     int i = 0;
     for (i = 0; i < tok_count; i++) {
       tokens[i] = tok ? strdup(tok) : tok;
       tok=strtok(NULL," \n");
-    } 
+    }
     free(str);
   }
   LOG_RETURN(tokens);
