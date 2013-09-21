@@ -8,7 +8,7 @@
  */
 #ifndef _SS_DEBUG_H_
 #ifndef DEBUG
-  #define DEBUG 0  
+  #define DEBUG 0
 #endif
 
 /**

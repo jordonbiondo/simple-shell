@@ -20,4 +20,3 @@ optimize = opt.Program(o)
 #debug program
 d = dbg.Object('build/ss-dbg', source_files)
 debug = dbg.Program(d)
- 
