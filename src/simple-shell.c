@@ -77,7 +77,7 @@ int main(int argc, char* argv[], char* envp[]) {
       printf(EOF_ERROR_MSG);
       exit_shell();
     }
-    #if DEBUG
+#if DEBUG
     dump_buffers();
     #endif
   }
@@ -182,7 +182,7 @@ bool str_is_whitespace(char* str) {
 /**
  * Is cd command?
  */
-inline bool is_cd_command(char* buffer) {
+COMPILER_INLINE bool is_cd_command(char* buffer) {
   return (strncmp(buffer, "cd", 2) == 0 && buffer[2] == ' ');
 }
 
@@ -218,7 +218,7 @@ char* read_input(void) {
 /**
  * Is quit/exit command?
  */
-inline bool is_quit_command(char* buffer) {
+COMPILER_INLINE bool is_quit_command(char* buffer) {
   return (strcmp(buffer, "quit\n") == 0) || (strcmp(buffer, "exit\n") == 0);
 }
 
@@ -277,7 +277,7 @@ char** tokenize(const char* input) {
     tok = strtok(NULL, " \n");
   }
   free(str);
-  char** tokens;
+  char** tokens = NULL;
   if (tok_count) {
     str = strdup(input);
     tokens = malloc(tok_count*sizeof(*tokens));

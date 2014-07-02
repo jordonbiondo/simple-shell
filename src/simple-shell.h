@@ -12,6 +12,12 @@
  */
 #define PROMPT_BUFFER_SIZE 512
 
+#ifdef __CLANG__
+#define COMPILER_INLINE static inline
+#elseifdef __GNUC__
+#define COMPILER_INLINE inline
+#endif
+
 
 /**
  * User input
